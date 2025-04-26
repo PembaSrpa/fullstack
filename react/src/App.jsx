@@ -34,12 +34,7 @@ const App = () => {
                 toast.error("Error submitting form!");
             });
     };
-
-    const initial = {
-        email: "",
-        password: "",
-    };
-    const [logData, setLogData] = useState(initial);
+    const [logData, setLogData] = useState(init);
     const handleLog = (e) => {
         setLogData((prev) => ({
             ...prev,
@@ -53,7 +48,7 @@ const App = () => {
             .then((res) => {
                 console.log(res, ":get form data");
                 toast.success(res.data.message);
-                setLogData(initial);
+                setLogData(init);
             })
             .catch((err) => {
                 console.log(err, ":error in get form data");
