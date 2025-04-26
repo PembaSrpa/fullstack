@@ -83,9 +83,6 @@ const App = () => {
             });
     };
     const [table, setTable] = useState(false);
-    useEffect(() => {
-        getData();
-    });
 
     const handleDelete = async (id) => {
         await axios
@@ -122,6 +119,10 @@ const App = () => {
                 toast.error("Error editing user!");
             });
     };
+
+    useEffect(() => {
+        getData();
+    }, [formData, logData, tabdata, editData, log, reg, table, edt]);
 
     return (
         <>
