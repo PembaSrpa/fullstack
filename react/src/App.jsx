@@ -53,7 +53,7 @@ const App = () => {
             .catch((err) => {
                 console.log(err, ":error in get form data");
                 toast.error(
-                    err.response?.data?.message || "Error checking login!"
+                    err.response?.data?.error || "Error checking login!"
                 );
             });
     };

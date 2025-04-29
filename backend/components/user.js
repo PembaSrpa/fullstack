@@ -82,22 +82,23 @@ export const checkUserLogin = (req, res) => {
         if (result.length === 0) {
             return res.status(401).send({
                 message: "Login unsuccessful",
-                error: "Invalid email or password",
+                error: "Email doesn't exist",
             });
         }
         const isPasswordCorrect = bcrypt.compareSync(
             password,
             result[0].password
         );
-        if (!isPasswordCorrect) {
-            return res.status(401).send({
-                message: "Login unsuccessful",
-                error: "Invalid password",
+        if (isPasswordCorrect) {
+            const { password, ...user } = result[0];
+            return res.status(200).send({
+                message: "Login successful",
+                user: user,
             });
         }
-        return res.status(200).send({
-            message: "Login successful",
-            user: result[0],
+        return res.status(401).send({
+            message: "Login unsuccessful",
+            error: "Invalid password",
         });
     });
 }; // Check login
