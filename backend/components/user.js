@@ -1,16 +1,17 @@
 import { db } from "../database/db.js";
+import bcrypt from "bcryptjs";
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~CRUD~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
 export const postUser = (req, res) => {
     const { name, email, password, address, age, phone } = req.body;
-
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPw = bcrypt.hashSync(password, salt);
     const q =
         "insert into exampleusers ( name, email, password, address, age, phone) values (?, ?, ?, ?, ?, ?)";
-
     db.query(
         q,
-        [name, email, password, address, age, phone],
+        [name, email, hashedPw, address, age, phone],
         (error, result) => {
             if (error) return res.send(error);
             return res.send({
@@ -51,11 +52,13 @@ export const deleteUser = (req, res) => {
 export const updateUser = (req, res) => {
     const id = req.params.id;
     const { name, email, password, address, age, phone } = req.body;
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPw = bcrypt.hashSync(password, salt);
     const r =
         "UPDATE exampleusers SET name = ?, email = ?, password = ?, address = ?, age = ?, phone = ? WHERE id = ?";
     db.query(
         r,
-        [name, email, password, address, age, phone, id],
+        [name, email, hashedPw, address, age, phone, id],
         (error, result) => {
             if (error) return res.status(500).send(error);
             if (result.affectedRows === 0) {
@@ -82,7 +85,11 @@ export const checkUserLogin = (req, res) => {
                 error: "Invalid email or password",
             });
         }
-        if (result[0].password !== password) {
+        const isPasswordCorrect = bcrypt.compareSync(
+            password,
+            result[0].password
+        );
+        if (!isPasswordCorrect) {
             return res.status(401).send({
                 message: "Login unsuccessful",
                 error: "Invalid password",
